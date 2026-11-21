@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#f6b8cc">
+<title>StudyBloom 🌸</title>
+
+<style>
+:root {
+  --bg: #fff0f5;
+  --card: #ffffff;
+  --accent: #e88eae;
+  --text: #493c48;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+header {
+  background: var(--accent);
+  color: white;
+  padding: 20px;
+  text-align: center;
+}
+
+nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 7px;
+  padding: 12px;
+  background: white;
+}
+
+button {
+  border: none;
+  background: var(--accent);
+  color: white;
+  padding: 10px 14px;
+  border-radius: 12px;
+  cursor: pointer;
+  margin: 3px;
+}
+
+button:hover {
+  opacity: .85;
+}
+
+main {
+  max-width: 850px;
+  margin: auto;
+  padding: 18px;
+}
+
+.screen {
+  display: none;
+}
+
+.screen.active {
+  display: block;
+}
+
+.card {
+  background: var(--card);
+  padding: 18px;
+  border-radius: 18px;
+  margin: 12px 0;
+  box-shadow: 0 3px 12px #0000000c;
+}
+
+input, textarea, select {
+  width: 100%;
+  padding: 12px;
+  margin: 7px 0;
+  border: 1px solid #e7c6d2;
+  border-radius: 10px;
+  font: inherit;
+}
+
+textarea {
+  min-height: 100px;
+}
+
+li {
+  margin: 10px 0;
+  overflow-wrap: anywhere;
+}
+
+.timer {
+  font-size: 45px;
+  text-align: center;
+  margin: 20px;
+}
+
+.dark {
+  --bg: #24212c;
+  --card: #373241;
+  --text: #fff0f5;
+}
+
+.dark nav {
+  background: #373241;
+}
+
+.dark input, .dark textarea, .dark select {
+  background: #494354;
+  color: white;
+}
+
+footer {
+  text-align: center;
+  padding: 20px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>🌸 StudyBloom</h1>
+  <p>Your little space to grow and learn</p>
+</header>
+
+<nav>
+  <button onclick="show('home')">Home</button>
+  <button onclick="show('tasks')">Tasks</button>
+  <button onclick="show('timetable')">Timetable</button>
+  <button onclick="show('timer')">Timer</button>
+  <button onclick="show('notes')">Notes</button>
+  <button onclick="show('progress')">Progress</button>
+  <button onclick="show('settings')">Settings</button>
+</nav>
+
+<main>
+
+<section id="home" class="screen active">
+  <div class="card">
+    <h2>Welcome to StudyBloom 🌷</h2>
+    <p>Small steps every day make big progress.</p>
+    <p id="today"></p>
+  </div>
+  <div class="card">
+    <h3>Your study dashboard</h3>
+    <p id="taskCount">Tasks: 0</p>
+    <p id="noteCount">Notes: 0</p>
+  </div>
+</section>
+
+<section id="tasks" class="screen">
+  <div class="card">
+    <h2>My Tasks 📚</h2>
+    <input id="taskInput" placeholder="Enter a task">
+    <button onclick="addTask()">Add Task</button>
+    <ul id="taskList"></ul>
+  </div>
+</section>
+
+<section id="timetable" class="screen">
+  <div class="card">
+    <h2>Study Timetable 🗓️</h2>
+    <input id="subject" placeholder="Subject">
+    <input id="studyTime" type="time">
+    <button onclick="addSchedule()">Add Schedule</button>
+    <ul id="scheduleList"></ul>
+  </div>
+</section>
+
+<section id="timer" class="screen">
+  <div class="card">
+    <h2>Study Timer ⏰</h2>
+    <div class="timer" id="clock">25:00</div>
+    <button onclick="startTimer()">Start</button>
+    <button onclick="pauseTimer()">Pause</button>
+    <button onclick="resetTimer()">Reset</button>
+  </div>
+</section>
+
+<section id="notes" class="screen">
+  <div class="card">
+    <h2>My Notes 📝</h2>
+    <input id="noteTitle" placeholder="Note title">
+    <textarea id="noteText" placeholder="Write your notes here"></textarea>
+    <button onclick="addNote()">Save Note</button>
+    <ul id="noteList"></ul>
+  </div>
+  <div class="card">
+    <h3>Upload study files</h3>
+    <p>Choose a PDF, Word document or image.</p>
+    <input id="fileInput" type="file"
+      accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+    <ul id="fileList"></ul>
+  </div>
+</section>
+
+<section id="progress" class="screen">
+  <div class="card">
+    <h2>My Progress 🌟</h2>
+    <p id="progressText">Completed tasks: 0</p>
+  </div>
+</section>
+
+<section id="settings" class="screen">
+  <div class="card">
+    <h2>Settings 🎨</h2>
+
+    <label>Choose a theme</label>
+    <select id="theme" onchange="changeTheme()">
+      <option value="pink">Cherry Blossom</option>
+      <option value="lavender">Lavender Dreams</option>
+      <option value="sage">Sage Garden</option>
+      <option value="blue">Sky Blue</option>
+      <option value="coffee">Coffee Latte</option>
+      <option value="peach">Peach Paradise</option>
+      <option value="sunshine">Sunshine</option>
+      <option value="midnight">Midnight</option>
+    </select>
+
+    <button onclick="toggleDark()">Toggle Dark Mode</button>
+
+    <label>Choose font</label>
+    <select onchange="document.body.style.fontFamily=this.value">
+      <option value="Arial">Arial</option>
+      <option value="Georgia">Georgia</option>
+      <option value="Verdana">Verdana</option>
+      <option value="Trebuchet MS">Trebuchet</option>
+    </select>
+
+    <label>Button style</label>
+    <select onchange="setButtons(this.value)">
+      <option value="12px">Rounded</option>
+      <option value="3px">Square</option>
+      <option value="30px">Pill</option>
+    </select>
+
+    <label>Custom wallpaper</label>
+    <input type="file" accept="image/*" onchange="wallpaper(event)">
+  </div>
+</section>
+
+</main>
+
+<footer>Made with 🌸 StudyBloom</footer>
+
+<script>
+function getData(key) {
+  try {
+    return JSON.parse(localStorage.getItem(key)) || [];
+  } catch {
+    return [];
+  }
+}
+
+function saveData(key, data) {
+  localStorage.setItem(key, JSON.stringify(data));
+}
+
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s =>
+    s.classList.remove('active')
+  );
+  document.getElementById(id).classList.add('active');
+}
+
+let tasks = getData('sb_tasks');
+let schedules = getData('sb_schedules');
+let notes = getData('sb_notes');
+let files = getData('sb_files');
+
+function render() {
+  taskList.innerHTML = '';
+  tasks.forEach((t, i) => {
+    const li = document.createElement('li');
+    const label = document.createElement('span');
+    label.textContent = t.text + (t.done ? ' ✓' : '');
+    const done = document.createElement('button');
+    done.textContent = t.done ? 'Undo' : 'Complete';
+    done.onclick = () => {
+      tasks[i].done = !tasks[i].done;
+      saveData('sb_tasks', tasks);
+      render();
+    };
+    const del = document.createElement('button');
+    del.textContent = 'Delete';
+    del.onclick = () => {
+      tasks.splice(i, 1);
+      saveData('sb_tasks', tasks);
+      render();
+    };
+    li.append(label, done, del);
+    taskList.appendChild(li);
+  });
+
+  scheduleList.innerHTML = '';
+  schedules.forEach(s => {
+    const li = document.createElement('li');
+    li.textContent = s.time + ' — ' + s.subject;
+    scheduleList.appendChild(li);
+  });
+
+  noteList.innerHTML = '';
+  notes.forEach(n => {
+    const li = document.createElement('li');
+    li.textContent = n.title + ': ' + n.text;
+    noteList.appendChild(li);
+  });
+
+  fileList.innerHTML = '';
+  files.forEach(f => {
+    const li = document.createElement('li');
+    li.textContent = f;
+    fileList.appendChild(li);
+  });
+
+  taskCount.textContent = 'Tasks: ' + tasks.length;
+  noteCount.textContent = 'Notes: ' + notes.length;
+  progressText.textContent =
+    'Completed tasks: ' + tasks.filter(t => t.done).length;
+}
+
+function addTask() {
+  const value = taskInput.value.trim();
+  if (!value) return;
+  tasks.push({text:value, done:false});
+  saveData('sb_tasks', tasks);
+  taskInput.value = '';
+  render();
+}
+
+function addSchedule() {
+  const subjectValue = subject.value.trim();
+  if (!subjectValue || !studyTime.value) return;
+  schedules.push({subject:subjectValue, time:studyTime.value});
+  saveData('sb_schedules', schedules);
+  subject.value = '';
+  render();
+}
+
+function addNote() {
+  const title = noteTitle.value.trim();
+  const text = noteText.value.trim();
+  if (!title || !text) return;
+  notes.push({title, text});
+  saveData('sb_notes', notes);
+  noteTitle.value = '';
+  noteText.value = '';
+  render();
+}
+
+fileInput.addEventListener('change', () => {
+  const file = fileInput.files[0];
+  if (!file) return;
+  files.push(file.name);
+  saveData('sb_files', files);
+  render();
+  fileInput.value = '';
+});
+
+let seconds = 1500;
+let interval = null;
+
+function updateClock() {
+  clock.textContent =
+    String(Math.floor(seconds / 60)).padStart(2, '0') +
+    ':' +
+    String(seconds % 60).padStart(2, '0');
+}
+
+function startTimer() {
+  if (interval) return;
+  interval = setInterval(() => {
+    if (seconds > 0) {
+      seconds--;
+      updateClock();
+    } else {
+      pauseTimer();
+      alert('Study session complete! Great work 🌸');
+    }
+  }, 1000);
+}
+
+function pauseTimer() {
+  clearInterval(interval);
+  interval = null;
+}
+
+function resetTimer() {
+  pauseTimer();
+  seconds = 1500;
+  updateClock();
+}
+
+function changeTheme() {
+  const themes = {
+    pink:['#fff0f5','#ffffff','#e88eae','#493c48'],
+    lavender:['#f0eaff','#ffffff','#a78bda','#423650'],
+    sage:['#edf5e9','#ffffff','#8eae86','#344735'],
+    blue:['#eaf5ff','#ffffff','#82b9e8','#30465a'],
+    coffee:['#f5eadf','#ffffff','#b68c6a','#554033'],
+    peach:['#fff0e8','#ffffff','#f0a68c','#553d35'],
+    sunshine:['#fff9dc','#ffffff','#edc75a','#51452b'],
+    midnight:['#24212c','#373241','#9b83cf','#ffffff']
+  };
+  const values = themes[theme.value];
+  document.documentElement.style.setProperty('--bg', values[0]);
+  document.documentElement.style.setProperty('--card', values[1]);
+  document.documentElement.style.setProperty('--accent', values[2]);
+  document.documentElement.style.setProperty('--text', values[3]);
+  localStorage.setItem('sb_theme', theme.value);
+}
+
+function toggleDark() {
+  document.body.classList.toggle('dark');
+  localStorage.setItem(
+    'sb_dark',
+    document.body.classList.contains('dark')
+  );
+}
+
+function setButtons(radius) {
+  document.querySelectorAll('button').forEach(b => {
+    b.style.borderRadius = radius;
+  });
+  localStorage.setItem('sb_radius', radius);
+}
+
+function wallpaper(event) {
+  const file = event.target.files[0];
+  if (!file || !file.type.startsWith('image/')) return;
+  if (file.size > 1500000) {
+    alert('Please choose an image smaller than 1.5 MB.');
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = e => {
+    document.body.style.backgroundImage =
+      `url("${e.target.result}")`;
+    document.body.style.backgroundSize = 'cover';
+    document.body.style.backgroundAttachment = 'fixed';
+    localStorage.setItem('sb_wallpaper', e.target.result);
+  };
+  reader.readAsDataURL(file);
+}
+
+document.getElementById('today').textContent =
+  new Date().toDateString();
+
+render();
+
+const savedTheme = localStorage.getItem('sb_theme');
+if (savedTheme) {
+  theme.value = savedTheme;
+  changeTheme();
+}
+
+if (localStorage.getItem('sb_dark') === 'true') {
+  document.body.classList.add('dark');
+}
+
+const savedRadius = localStorage.getItem('sb_radius');
+if (savedRadius) setButtons(savedRadius);
+
+const savedWallpaper = localStorage.getItem('sb_wallpaper');
+if (savedWallpaper) {
+  document.body.style.backgroundImage =
+    `url("${savedWallpaper}")`;
+  document.body.style.backgroundSize = 'cover';
+  document.body.style.backgroundAttachment = 'fixed';
+}
+</script>
+
+</body>
+</html>
